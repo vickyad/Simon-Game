@@ -1,3 +1,5 @@
+const TOTAL_TURNS = 20
+
 let order = [];
 let playerOrder = [];
 let flash;
@@ -5,42 +7,18 @@ let turn;
 let good;
 let compTurn;
 let intervalId;
-let strict = false;
 let noise = true;
-let on = false;
-let win;
+let win = true;
 
-const turnCounter = document.querySelector("#turn");
 const topLeft = document.querySelector("#topleft");
 const topRight = document.querySelector("#topright");
 const bottomLeft = document.querySelector("#bottomleft");
 const bottomRight = document.querySelector("#bottomright");
-const strictButton = document.querySelector("#strict");
-const onButton = document.querySelector("#on");
 const startButton = document.querySelector("#start");
 
-strictButton.addEventListener('click', (event) => {
-  if (strictButton.checked == true) {
-    strict = true;
-  } else {
-    strict = false;
-  }
-});
-
-onButton.addEventListener('click', (event) => {
-  if (onButton.checked == true) {
-    on = true;
-    turnCounter.innerHTML = "-";
-  } else {
-    on = false;
-    turnCounter.innerHTML = "";
-    clearColor();
-    clearInterval(intervalId);
-  }
-});
-
 startButton.addEventListener('click', (event) => {
-  if (on || win) {
+  if (win) {
+    startButton.style.opacity = 0
     play();
   }
 });
@@ -52,9 +30,8 @@ function play() {
   flash = 0;
   intervalId = 0;
   turn = 1;
-  turnCounter.innerHTML = 1;
   good = true;
-  for (var i = 0; i < 20; i++) {
+  for (var i = 0; i < TOTAL_TURNS; i++) {
     order.push(Math.floor(Math.random() * 4) + 1);
   }
   compTurn = true;
@@ -63,13 +40,10 @@ function play() {
 }
 
 function gameTurn() {
-  on = false;
-
   if (flash == turn) {
     clearInterval(intervalId);
     compTurn = false;
     clearColor();
-    on = true;
   }
 
   if (compTurn) {
@@ -90,7 +64,7 @@ function one() {
     audio.play();
   }
   noise = true;
-  topLeft.style.backgroundColor = "lightgreen";
+  topLeft.classList.add('dino_moving')
 }
 
 function two() {
@@ -99,7 +73,7 @@ function two() {
     audio.play();
   }
   noise = true;
-  topRight.style.backgroundColor = "tomato";
+  topRight.classList.add('dino_moving')
 }
 
 function three() {
@@ -108,7 +82,7 @@ function three() {
     audio.play();
   }
   noise = true;
-  bottomLeft.style.backgroundColor = "yellow";
+  bottomLeft.classList.add('dino_moving')
 }
 
 function four() {
@@ -117,25 +91,24 @@ function four() {
     audio.play();
   }
   noise = true;
-  bottomRight.style.backgroundColor = "lightskyblue";
+  bottomRight.classList.add('dino_moving')
 }
 
 function clearColor() {
-  topLeft.style.backgroundColor = "darkgreen";
-  topRight.style.backgroundColor = "darkred";
-  bottomLeft.style.backgroundColor = "goldenrod";
-  bottomRight.style.backgroundColor = "darkblue";
+  topLeft.classList.remove('dino_moving')
+  topRight.classList.remove('dino_moving')
+  bottomLeft.classList.remove('dino_moving')
+  bottomRight.classList.remove('dino_moving')
 }
 
 function flashColor() {
-  topLeft.style.backgroundColor = "lightgreen";
-  topRight.style.backgroundColor = "tomato";
-  bottomLeft.style.backgroundColor = "yellow";
-  bottomRight.style.backgroundColor = "lightskyblue";
+    topLeft.classList.add('dino_moving')
+    topRight.classList.add('dino_moving')
+    bottomLeft.classList.add('dino_moving')
+    bottomRight.classList.add('dino_moving')
 }
 
 topLeft.addEventListener('click', (event) => {
-  if (on) {
     playerOrder.push(1);
     check();
     one();
@@ -144,11 +117,9 @@ topLeft.addEventListener('click', (event) => {
         clearColor();
       }, 300);
     }
-  }
 })
 
 topRight.addEventListener('click', (event) => {
-  if (on) {
     playerOrder.push(2);
     check();
     two();
@@ -157,11 +128,9 @@ topRight.addEventListener('click', (event) => {
         clearColor();
       }, 300);
     }
-  }
 })
 
 bottomLeft.addEventListener('click', (event) => {
-  if (on) {
     playerOrder.push(3);
     check();
     three();
@@ -170,11 +139,9 @@ bottomLeft.addEventListener('click', (event) => {
         clearColor();
       }, 300);
     }
-  }
 })
 
 bottomRight.addEventListener('click', (event) => {
-  if (on) {
     playerOrder.push(4);
     check();
     four();
@@ -183,33 +150,26 @@ bottomRight.addEventListener('click', (event) => {
         clearColor();
       }, 300);
     }
-  }
 })
 
 function check() {
   if (playerOrder[playerOrder.length - 1] !== order[playerOrder.length - 1])
     good = false;
 
-  if (playerOrder.length == 20 && good) {
+  if (playerOrder.length == TOTAL_TURNS && good) {
     winGame();
   }
 
   if (good == false) {
     flashColor();
-    turnCounter.innerHTML = "NO!";
     setTimeout(() => {
-      turnCounter.innerHTML = turn;
       clearColor();
 
-      if (strict) {
-        play();
-      } else {
         compTurn = true;
         flash = 0;
         playerOrder = [];
         good = true;
         intervalId = setInterval(gameTurn, 800);
-      }
     }, 800);
 
     noise = false;
@@ -220,7 +180,6 @@ function check() {
     playerOrder = [];
     compTurn = true;
     flash = 0;
-    turnCounter.innerHTML = turn;
     intervalId = setInterval(gameTurn, 800);
   }
 
@@ -228,7 +187,6 @@ function check() {
 
 function winGame() {
   flashColor();
-  turnCounter.innerHTML = "WIN!";
-  on = false;
   win = true;
+  startButton.style.opacity = 1
 }
