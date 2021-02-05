@@ -1,76 +1,79 @@
 const TOTAL_TURNS = 20
 
-let order = [];
-let playerOrder = [];
-let flash;
-let turn;
-let good;
-let compTurn;
-let intervalId;
-let noise = true;
-let win = true;
+let order = []
+let playerOrder = []
+let flash
+let turn
+let good
+let compTurn
+let intervalId
+let noise = true
+let win = true
 
-const topLeft = document.querySelector("#topleft");
-const topRight = document.querySelector("#topright");
-const bottomLeft = document.querySelector("#bottomleft");
-const bottomRight = document.querySelector("#bottomright");
-const startButton = document.querySelector("#start");
+const topLeft = document.querySelector("#topleft")
+const topRight = document.querySelector("#topright")
+const bottomLeft = document.querySelector("#bottomleft")
+const bottomRight = document.querySelector("#bottomright")
+const startButton = document.querySelector("#start")
+const turnDiv = document.querySelector('#turn')
 
 startButton.addEventListener('click', (event) => {
   if (win) {
     startButton.style.opacity = 0
-    play();
+    play()
   }
 });
 
 function play() {
-  win = false;
-  order = [];
-  playerOrder = [];
-  flash = 0;
-  intervalId = 0;
-  turn = 1;
-  good = true;
-  for (var i = 0; i < TOTAL_TURNS; i++) {
-    order.push(Math.floor(Math.random() * 4) + 1);
-  }
-  compTurn = true;
+  win = false
+  order = []
+  playerOrder = []
+  flash = 0
+  intervalId = 0
+  turn = 1
+  good = true
+  turnDiv.innerHTML = turn
 
-  intervalId = setInterval(gameTurn, 800);
+  for (var i = 0; i < TOTAL_TURNS; i++) {
+    order.push(Math.floor(Math.random() * 4) + 1)
+  }
+  compTurn = true
+
+  intervalId = setInterval(gameTurn, 800)
 }
 
 function gameTurn() {
   if (flash == turn) {
-    clearInterval(intervalId);
-    compTurn = false;
-    clearColor();
+    clearInterval(intervalId)
+    compTurn = false
+    clearColor()
   }
 
   if (compTurn) {
-    clearColor();
+    clearColor()
     setTimeout(() => {
-      if (order[flash] == 1) one();
-      if (order[flash] == 2) two();
-      if (order[flash] == 3) three();
-      if (order[flash] == 4) four();
-      flash++;
-    }, 200);
+      if (order[flash] == 1) one()
+      if (order[flash] == 2) two()
+      if (order[flash] == 3) three()
+      if (order[flash] == 4) four()
+      flash++
+    }, 200)
   }
 }
 
 function one() {
   if (noise) {
-    let audio = document.getElementById("clip1");
-    audio.play();
+    let audio = document.getElementById("clip1")
+    audio.play()
   }
-  noise = true;
+  noise = true
   topLeft.classList.add('dino_moving')
 }
 
 function two() {
   if (noise) {
-    let audio = document.getElementById("clip2");
-    audio.play();
+    let audio = document.getElementById("clip2")
+    audio.play()
   }
   noise = true;
   topRight.classList.add('dino_moving')
@@ -78,7 +81,7 @@ function two() {
 
 function three() {
   if (noise) {
-    let audio = document.getElementById("clip3");
+    let audio = document.getElementById("clip3")
     audio.play();
   }
   noise = true;
@@ -87,8 +90,8 @@ function three() {
 
 function four() {
   if (noise) {
-    let audio = document.getElementById("clip4");
-    audio.play();
+    let audio = document.getElementById("clip4")
+    audio.play()
   }
   noise = true;
   bottomRight.classList.add('dino_moving')
@@ -110,91 +113,92 @@ function flashColor() {
 
 topLeft.addEventListener('click', (event) => {
     if(!compTurn){
-        playerOrder.push(1);
-        check();
-        one();
+        playerOrder.push(1)
+        check()
+        one()
         if(!win) {
           setTimeout(() => {
-            clearColor();
-          }, 300);
+            clearColor()
+          }, 300)
         }
     }
 })
 
 topRight.addEventListener('click', (event) => {
     if(!compTurn){
-        playerOrder.push(2);
-        check();
-        two();
+        playerOrder.push(2)
+        check()
+        two()
         if(!win) {
           setTimeout(() => {
-            clearColor();
-          }, 300);
+            clearColor()
+          }, 300)
         }
     }
 })
 
 bottomLeft.addEventListener('click', (event) => {
     if(!compTurn){
-        playerOrder.push(3);
-        check();
-        three();
+        playerOrder.push(3)
+        check()
+        three()
         if(!win) {
           setTimeout(() => {
-            clearColor();
-          }, 300);
+            clearColor()
+          }, 300)
         }
     }
 })
 
 bottomRight.addEventListener('click', (event) => {
     if(!compTurn){
-        playerOrder.push(4);
-        check();
-        four();
+        playerOrder.push(4)
+        check()
+        four()
         if(!win) {
           setTimeout(() => {
-            clearColor();
-          }, 300);
+            clearColor()
+          }, 300)
         }
     }
 })
 
 function check() {
   if (playerOrder[playerOrder.length - 1] !== order[playerOrder.length - 1])
-    good = false;
+    good = false
 
   if (playerOrder.length == TOTAL_TURNS && good) {
-    winGame();
+    winGame()
   }
 
   if (good == false) {
-    flashColor();
+    flashColor()
     setTimeout(() => {
-      clearColor();
+      clearColor()
 
-        compTurn = true;
-        flash = 0;
-        playerOrder = [];
-        good = true;
+        compTurn = true
+        flash = 0
+        playerOrder = []
+        good = true
         intervalId = setInterval(gameTurn, 800);
-    }, 800);
+    }, 800)
 
-    noise = false;
+    noise = false
   }
 
   if (turn == playerOrder.length && good && !win) {
     turn++;
-    playerOrder = [];
-    compTurn = true;
-    flash = 0;
-    intervalId = setInterval(gameTurn, 800);
+    turnDiv.innerHTML = turn
+    playerOrder = []
+    compTurn = true
+    flash = 0
+    intervalId = setInterval(gameTurn, 800)
   }
 
 }
 
 function winGame() {
-  flashColor();
-  win = true;
+  flashColor()
+  win = true
   startButton.style.opacity = 1
 }
